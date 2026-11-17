@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartStock - Protótipo</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f3f4f6;
+            --sidebar-bg: #1e293b;
+            --text-main: #1f2937;
+            --text-light: #f8fafc;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* TELA DE LOGIN */
+        #login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: var(--sidebar-bg);
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            width: 350px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .login-box h1 {
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        button.btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button.btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* LINK ESQUECI A SENHA */
+        .forgot-password {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .forgot-password a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+            color: var(--primary-hover);
+        }
+
+        /* APLICAÇÃO (Após o Login) */
+        #app-screen {
+            display: none; /* Escondido inicialmente */
+            height: 100vh;
+        }
+
+        .layout {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* MENU LATERAL */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #334155;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background-color: #0f172a;
+            border-left-color: var(--primary);
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .topbar {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .content-area {
+            padding: 30px;
+        }
+
+        /* TELAS */
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* DASHBOARD */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary);
+        }
+
+        .card h3 { font-size: 14px; color: #6b7280; margin-bottom: 10px; }
+        .card p { font-size: 24px; font-weight: bold; }
+        .card.alert { border-left-color: var(--danger); }
+        
+        .alert-list {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .alert-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            color: var(--danger);
+            font-weight: 500;
+        }
+
+        /* TABELAS E FORMULÁRIOS */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .btn-acao {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+
+        .btn-editar { background: #e0f2fe; color: #0284c7; }
+        .btn-excluir { background: #fee2e2; color: #b91c1c; }
+        .btn-novo { background: var(--success); color: white; padding: 10px 20px; border-radius: 4px; border: none; cursor: pointer;}
+        
+        /* TELA VENDA */
+        .venda-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .venda-resumo {
+            margin-top: 20px;
+            text-align: right;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        
+        .venda-resumo h3 { margin-bottom: 10px; }
+        .venda-resumo .total { font-size: 24px; color: var(--primary); font-weight: bold; }
+        .desconto-texto { color: var(--danger); font-size: 12px; }
+
+    </style>
+</head>
+<body>
+
+    <!-- TELA DE LOGIN -->
+    <div id="login-screen">
+        <div class="login-box">
+            <h1>SmartStock</h1>
+            <div class="input-group">
+                <label>E-mail / Login</label>
+                <input type="text" id="loginUser" placeholder="admin@smartstock.com">
+            </div>
+            <div class="input-group">
+                <label>Senha</label>
+                <input type="password" placeholder="••••••••">
+            </div>
+            <button class="btn" onclick="fazerLogin()">Entrar no Sistema</button>
+            
+            <!-- Link Esqueci a Senha adicionado aqui -->
+            <div class="forgot-password">
+                <a href="#" onclick="alert('Um link de recuperação de senha foi enviado para o seu e-mail cadastrado!'); return false;">Esqueci a senha</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SISTEMA -->
+    <div id="app-screen">
+        <div class="layout">
+            <!-- SIDEBAR -->
+            <div class="sidebar">
+                <h2>SmartStock</h2>
+                <div class="menu-item active" onclick="mudarTela('dashboard', this)">📊 Dashboard</div>
+                <div class="menu-item" onclick="mudarTela('venda', this)">🛒 Registrar Venda</div>
+                <div class="menu-item" onclick="mudarTela('produtos', this)">📦 Gerenciar Produtos</div>
+                <div class="menu-item" style="margin-top: auto;" onclick="sair()">🚪 Sair</div>
+            </div>
+
+            <!-- MAIN -->
+            <div class="main-content">
+                <div class="topbar">
+                    <strong>Bem-vindo, Administrador</strong>
+                    <span>Data: Hoje</span>
+                </div>
+
+                <div class="content-area">
+                    
+                    <!-- DASHBOARD -->
+                    <div id="view-dashboard" class="view active">
+                        <h2>Painel de Indicadores</h2>
+                        <br>
+                        <div class="cards-container">
+                            <div class="card">
+                                <h3>Valor Total do Estoque</h3>
+                                <p>R$ 45.000,00</p>
+                            </div>
+                            <div class="card alert">
+                                <h3>Perdas no Mês</h3>
+                                <p>R$ 1.200,00</p>
+                            </div>
+                            <div class="card" style="border-left-color: var(--warning);">
+                                <h3>Vendas Hoje</h3>
+                                <p>R$ 3.450,00</p>
+                            </div>
+                        </div>
+
+                        <div class="alert-list">
+                            <h3 style="margin-bottom: 15px; color: var(--danger);">⚠️ Alertas Críticos</h3>
+                            <div class="alert-item">🔴 5 Produtos Vencidos (Ação necessária)</div>
+                            <div class="alert-item" style="color: var(--warning);">🟡 12 Produtos Próximos do Vencimento</div>
+                            <div class="alert-item" style="color: #ca8a04;">🟠 8 Produtos Abaixo do Estoque Mínimo</div>
+                        </div>
+                    </div>
+
+                    <!-- REGISTRAR VENDA -->
+                    <div id="view-venda" class="view">
+                        <div class="page-header">
+                            <h2>Registrar Venda</h2>
+                        </div>
+                        <div class="venda-container">
+                            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                                <input type="text" placeholder="Digite o código de barras ou nome do produto..." style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+                                <button class="btn" style="width: auto; padding: 10px 20px;">Adicionar Item</button>
+                            </div>
+                            
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Cód.</th>
+                                        <th>Produto</th>
+                                        <th>Lote (FEFO)</th>
+                                        <th>Validade</th>
+                                        <th>Qtd</th>
+                                        <th>Preço Unit.</th>
+                                        <th>Desconto</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1020</td>
+                                        <td>Leite Integral</td>
+                                        <td>L-2025A</td>
+                                        <td>20/11/2026</td>
+                                        <td>2</td>
+                                        <td>R$ 5,00</td>
+                                        <td>0%</td>
+                                        <td>R$ 10,00</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2045</td>
+                                        <td>Iogurte Natural <br><span class="desconto-texto">*Desconto FEFO aplicado</span></td>
+                                        <td>L-2025B</td>
+                                        <td>25/11/2026</td>
+                                        <td>3</td>
+                                        <td>R$ 4,00</td>
+                                        <td style="color: var(--danger);">20%</td>
+                                        <td>R$ 9,60</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div class="venda-resumo">
+                                <p>Valor Bruto: R$ 22,00</p>
+                                <p style="color: var(--danger);">Descontos: - R$ 2,40</p>
+                                <h3 class="total">Total a Pagar: R$ 19,60</h3>
+                                <br>
+                                <button class="btn" style="width: 200px;">Finalizar Venda</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PRODUTOS (CRUD) -->
+                    <div id="view-produtos" class="view">
+                        <div class="page-header">
+                            <h2>Gerenciar Produtos</h2>
+                            <button class="btn-novo">+ Novo Produto</button>
+                        </div>
+                        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nome do Produto</th>
+                                    <th>Categoria</th>
+                                    <th>Preço Venda</th>
+                                    <th>Estoque Atual</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1001</td>
+                                    <td>Arroz 5kg</td>
+                                    <td>Alimentos</td>
+                                    <td>R$ 25,00</td>
+                                    <td>150</td>
+                                    <td>
+                                        <button class="btn-acao btn-editar">Editar</button>
+                                        <button class="btn-acao btn-excluir">Excluir</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>1002</td>
+                                    <td>Feijão 1kg</td>
+                                    <td>Alimentos</td>
+                                    <td>R$ 8,50</td>
+                                    <td>200</td>
+                                    <td>
+                                        <button class="btn-acao btn-editar">Editar</button>
+                                        <button class="btn-acao btn-excluir">Excluir</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2050</td>
+                                    <td>Shampoo 200ml</td>
+                                    <td>Higiene</td>
+                                    <td>R$ 15,00</td>
+                                    <td>45</td>
+                                    <td>
+                                        <button class="btn-acao btn-editar">Editar</button>
+                                        <button class="btn-acao btn-excluir">Excluir</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT PARA NAVEGAÇÃO -->
+    <script>
+        function fazerLogin() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-screen').style.display = 'block';
+        }
+
+        function sair() {
+            document.getElementById('app-screen').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+        }
+
+        function mudarTela(telaId, elementoMenu) {
+            // Esconde todas as telas
+            const telas = document.querySelectorAll('.view');
+            telas.forEach(tela => tela.classList.remove('active'));
+
+            // Remove a classe 'active' de todos os itens do menu
+            const menus = document.querySelectorAll('.menu-item');
+            menus.forEach(menu => menu.classList.remove('active'));
+
+            // Mostra a tela correta e ativa o menu
+            document.getElementById('view-' + telaId).classList.add('active');
+            elementoMenu.classList.add('active');
+        }
+    </script>
+</body>
+</html>
